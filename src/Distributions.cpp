@@ -12,6 +12,8 @@ SEXP dhalfcauchy(SEXP X, SEXP SCALE, SEXP LOGD) {
   int N = max(Rcpp::NumericVector::create(x.size(), scale.size()));
   Rcpp::NumericVector xn = rep_len(x, N), scalen = rep_len(scale, N);
   bool logd = as<bool>(LOGD);
+  bool scaletest = any(scale <= 0).is_true();
+  if (scaletest == true) stop("The scale parameter must be positive");
   Rcpp::NumericVector dens(N);
   for (int i = 0; i < N; i++) {
     dens[i] = log(2 * scalen[i]) - log(M_PI * (pow(xn[i], 2) + 
