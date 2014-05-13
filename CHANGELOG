@@ -1,4 +1,4 @@
-2014-05-13 Matrices: Added is.symmetric.matrix and tr
+2014-05-13 Matrices: Added is.positive.definite, is.symmetric.matrix, and tr
 2014-05-13 Distributions: Added dmvn and dmvnc
 2014-05-12 Distributions: Added dhalfcauchy
 2014-05-12 Added partial (well, partially)

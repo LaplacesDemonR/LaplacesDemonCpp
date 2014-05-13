@@ -1,4 +1,5 @@
 \name{Matrices}
+\alias{is.positive.definite}
 \alias{is.symmetric.matrix}
 \alias{tr}
 \title{Matrix Utility Functions}
@@ -6,6 +7,7 @@
   These are C++ versions of utility functions for working with matrices.
 }
 \usage{
+is.positive.definite(x)
 is.symmetric.matrix(x)
 tr(x)
 }
