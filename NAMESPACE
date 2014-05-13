@@ -1,0 +1,7 @@
+useDynLib(LaplacesDemonCpp)
+import(Rcpp, RcppArmadillo)
+export(dhalfcauchy,
+       dwishart,
+       interval,
+       partial,
+       rwishart)
