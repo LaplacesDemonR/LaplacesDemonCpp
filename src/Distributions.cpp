@@ -9,14 +9,13 @@ using namespace arma;
 
 SEXP dhalfcauchy(SEXP X, SEXP SCALE, SEXP LOGD) {
   Rcpp::NumericVector x(X), scale(SCALE);
-  bool logd = LOGD;
-  int N = x.size(), Ns = scale.size();
-  double sigma = 0;
+  int N = max(Rcpp::NumericVector::create(x.size(), scale.size()));
+  Rcpp::NumericVector xn = rep_len(x, N), scalen = rep_len(scale, N);
+  bool logd = as<bool>(LOGD);
   Rcpp::NumericVector dens(N);
   for (int i = 0; i < N; i++) {
-    if(Ns < N) sigma = scale[0];
-    else sigma = scale[i];
-    dens[i] = log(2 * sigma) - log(M_PI * (pow(x[i], 2) + pow(sigma, 2)));
+    dens[i] = log(2 * scalen[i]) - log(M_PI * (pow(xn[i], 2) + 
+      pow(scalen[i], 2)));
   }
   if (logd == false) dens = exp(dens);
   return wrap(dens);
@@ -30,7 +29,7 @@ SEXP dwishart(SEXP OMEGA, SEXP NU, SEXP s, SEXP LOGD) {
   arma::mat Omega = as<arma::mat>(OMEGA);
   double nu = as<double>(NU);
   arma::mat S = as<arma::mat>(s);
-  bool logd = LOGD;
+  bool logd = as<bool>(LOGD);
   int k = Omega.n_rows;
   double dens = 0, gamsum = 0;
   for (int i = 0; i < k; i++) {

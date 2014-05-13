@@ -4,7 +4,7 @@
 
 dhalfcauchy <- function(x, scale=25, log=FALSE)
      {
-     return(.Call("dhalfcauchy", x, scale, log,
+     return(.Call("dhalfcauchy", as.vector(x), as.vector(scale), log,
           PACKAGE="LaplacesDemonCpp"))
      }
 
