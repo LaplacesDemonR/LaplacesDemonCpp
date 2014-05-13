@@ -10,7 +10,6 @@ SEXP interval(SEXP X, SEXP A, SEXP B, SEXP REFLECT) {
   bool reflect = REFLECT;
   int N = x.size();
   int out = 1;
-  if (a > b) a = b;
   if (reflect == false) {
     for (int i = 1; i < N; i++) {
       if (x[i] < a) x[i] = a;
@@ -38,7 +37,6 @@ SEXP intervala(SEXP X, SEXP DIM, SEXP A, SEXP B, SEXP REFLECT) {
   bool reflect = REFLECT;
   int N = x.size();
   int out = 1;
-  if (a > b) a = b;
   if (reflect == false) {
     for (int i = 0; i < N; i++) {
       if (x[i] < a) x[i] = a;

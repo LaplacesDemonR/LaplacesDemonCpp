@@ -7,6 +7,8 @@
 
 interval <- function(x, a=-Inf, b=Inf, reflect=TRUE)
      {
+     if(missing(x)) stop("The x argument is required.")
+     if(a > b) stop("a > b.")
      if(is.vector(x) == TRUE)
           return(.Call("interval", x, a, b, reflect,
                PACKAGE="LaplacesDemonCpp"))

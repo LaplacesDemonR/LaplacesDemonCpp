@@ -12,8 +12,6 @@ SEXP dhalfcauchy(SEXP X, SEXP SCALE, SEXP LOGD) {
   int N = max(Rcpp::NumericVector::create(x.size(), scale.size()));
   Rcpp::NumericVector xn = rep_len(x, N), scalen = rep_len(scale, N);
   bool logd = as<bool>(LOGD);
-  bool scaletest = any(scale <= 0).is_true();
-  if (scaletest == true) stop("The scale parameter must be positive");
   Rcpp::NumericVector dens(N);
   for (int i = 0; i < N; i++) {
     dens[i] = log(2 * scalen[i]) - log(M_PI * (pow(xn[i], 2) + 
@@ -21,6 +19,54 @@ SEXP dhalfcauchy(SEXP X, SEXP SCALE, SEXP LOGD) {
   }
   if (logd == false) dens = exp(dens);
   return wrap(dens);
+}
+
+/*------------------------------------------------------------------------/
+/ Multivariate Normal Distribution                                        /
+/------------------------------------------------------------------------*/
+
+SEXP dmvn(SEXP X, SEXP MU, SEXP SIGMA, SEXP LOGD) {
+  arma::mat x = as<arma::mat>(X);
+  arma::mat mu = as<arma::mat>(MU);
+  arma::mat Sigma = as<arma::mat>(SIGMA);
+  bool logd = as<bool>(LOGD);
+  int n = x.n_rows;
+  int k = x.n_cols;
+  Rcpp::NumericVector dens(n);
+  arma::mat rooti = arma::trans(arma::inv(trimatu(arma::chol(Sigma))));
+  double rootisum = arma::sum(log(rooti.diag()));
+  double log2pi = std::log(2.0 * M_PI);
+  double constants = -(static_cast<double>(k)/2.0) * log2pi;
+  for (int i=0; i < n; i++) {
+    arma::vec z = rooti * arma::trans(x.row(i) - mu.row(i));
+    dens[i] = constants + rootisum - 0.5 * arma::sum(z%z);
+  }
+  if (logd == false) dens = exp(dens);
+  return(wrap(dens));
+}
+
+/*------------------------------------------------------------------------/
+/ Multivariate Normal Distribution: Cholesky Parameterization             /
+/------------------------------------------------------------------------*/
+
+SEXP dmvnc(SEXP X, SEXP MU, SEXP u, SEXP LOGD) {
+  arma::mat x = as<arma::mat>(X);
+  arma::mat mu = as<arma::mat>(MU);
+  arma::mat U = as<arma::mat>(u);
+  bool logd = as<bool>(LOGD);
+  int n = x.n_rows;
+  int k = x.n_cols;
+  Rcpp::NumericVector dens(n);
+  arma::mat rooti = arma::trans(arma::inv(U));
+  double rootisum = arma::sum(log(rooti.diag()));
+  double log2pi = std::log(2.0 * M_PI);
+  double constants = -(static_cast<double>(k)/2.0) * log2pi;
+  for (int i=0; i < n; i++) {
+    arma::vec z = rooti * arma::trans(x.row(i) - mu.row(i));
+    dens[i] = constants + rootisum - 0.5 * arma::sum(z%z);
+  }
+  if (logd == false) dens = exp(dens);
+  return(wrap(dens));
 }
 
 /*------------------------------------------------------------------------/

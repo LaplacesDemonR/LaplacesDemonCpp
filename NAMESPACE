@@ -1,7 +1,11 @@
 useDynLib(LaplacesDemonCpp)
-import(Rcpp, RcppArmadillo)
+import(LaplacesDemon, Rcpp, RcppArmadillo)
 export(dhalfcauchy,
+       dmvn,
+       dmvnc,
        dwishart,
        interval,
+       is.symmetric.matrix,
        partial,
-       rwishart)
+       rwishart,
+       tr)

@@ -7,6 +7,24 @@ RcppExport SEXP dhalfcauchy(SEXP X, SEXP SCALE, SEXP LOGD);
 
 #endif
 
+#ifndef _LaplacesDemonCpp_dmvn_H
+#define _LaplacesDemonCpp_dmvn_H
+
+#include <RcppArmadillo.h>
+
+RcppExport SEXP dmvn(SEXP X, SEXP MU, SEXP SIGMA, SEXP LOGD);
+
+#endif
+
+#ifndef _LaplacesDemonCpp_dmvnc_H
+#define _LaplacesDemonCpp_dmvnc_H
+
+#include <RcppArmadillo.h>
+
+RcppExport SEXP dmvnc(SEXP X, SEXP MU, SEXP u, SEXP LOGD);
+
+#endif
+
 #ifndef _LaplacesDemonCpp_dwishart_H
 #define _LaplacesDemonCpp_dwishart_H
 
