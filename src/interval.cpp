@@ -11,13 +11,13 @@ SEXP interval(SEXP X, SEXP A, SEXP B, SEXP REFLECT) {
   int N = x.size();
   int out = 1;
   if (reflect == false) {
-    for (int i = 1; i < N; i++) {
+    for (int i = 0; i < N; i++) {
       if (x[i] < a) x[i] = a;
       else if (x[i] > b) x[i] = b;
     }
   }
   else {
-    for (int i = 1; i < N; i++) {
+    for (int i = 0; i < N; i++) {
       out = 1;
       while (out == 1) {
         if (x[i] >= a && x[i] <= b) out = 0;

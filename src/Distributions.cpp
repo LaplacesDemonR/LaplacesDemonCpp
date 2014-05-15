@@ -21,6 +21,17 @@ SEXP dhalfcauchy(SEXP X, SEXP SCALE, SEXP LOGD) {
   return wrap(dens);
 }
 
+SEXP rhalfcauchy(SEXP N, SEXP SCALE) {
+  int n = as<int>(N);
+  double scale = as<double>(SCALE);
+  RNGScope scope;
+  Rcpp::NumericVector p(M_PI * runif(n) / 2.0), x(n);
+  for (int i = 0; i < n; i++) {
+    x[i] = scale * tan(p[i]);
+  }
+  return wrap(x);
+}
+
 /*------------------------------------------------------------------------/
 / Multivariate Normal Distribution                                        /
 /------------------------------------------------------------------------*/

@@ -43,6 +43,15 @@ RcppExport SEXP dwishartc(SEXP u, SEXP NU, SEXP s, SEXP LOGD);
 
 #endif
 
+#ifndef _LaplacesDemonCpp_rhalfcauchy_H
+#define _LaplacesDemonCpp_rhalfcauchy_H
+
+#include <RcppArmadillo.h>
+
+RcppExport SEXP rhalfcauchy(SEXP N, SEXP SCALE);
+
+#endif
+
 #ifndef _LaplacesDemonCpp_rmvn_H
 #define _LaplacesDemonCpp_rmvn_H
 
