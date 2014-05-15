@@ -1,3 +1,4 @@
+2014-05-15 Distributions: Added rhalfcauchy
 2014-05-13 Matrices: Added is.positive.definite, is.symmetric.matrix, and tr
 2014-05-13 Distributions: Added dmvn, dmvnc, rmvn, rmvnc, rmvnp, and rmvnpc
 2014-05-13 Distributions: Added dwishartc and rwishartc

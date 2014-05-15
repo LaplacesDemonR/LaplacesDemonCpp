@@ -1,15 +1,18 @@
 \name{dist.HalfCauchy}
 \alias{dhalfcauchy}
+\alias{rhalfcauchy}
 \title{Half-Cauchy Distribution}
 \description{
-  This is a C++ version of the \code{dhalfcauchy} function in the
-  \pkg{LaplacesDemon} package.
+  These are the C++ versions of the \code{dhalfcauchy} and
+  \code{rhalfcauchy} functions in the \pkg{LaplacesDemon} package.
 }
 \usage{
 dhalfcauchy(x, scale=25, log=FALSE)
+rhalfcauchy(n, scale=25)
 }
 \arguments{
   \item{x}{See \code{dhalfcauchy}.}
+  \item{n}{See \code{rhalfcauchy}.}
   \item{scale}{See \code{dhalfcauchy}.}
   \item{log}{See \code{dhalfcauchy}.}
 }
