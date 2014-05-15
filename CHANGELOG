@@ -1,5 +1,6 @@
 2014-05-13 Matrices: Added is.positive.definite, is.symmetric.matrix, and tr
-2014-05-13 Distributions: Added dmvn and dmvnc
+2014-05-13 Distributions: Added dmvn, dmvnc, rmvn, rmvnc, rmvnp, and rmvnpc
+2014-05-13 Distributions: Added dwishartc and rwishartc
 2014-05-12 Distributions: Added dhalfcauchy
 2014-05-12 Added partial (well, partially)
 2014-05-10 Distributions: Added dwishart and rwishart

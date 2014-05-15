@@ -1,15 +1,18 @@
 \name{dist.Multivariate.Normal}
 \alias{dmvn}
+\alias{rmvn}
 \title{Multivariate Normal Distribution}
 \description{
-  This is a C++ version of the \code{dmvn} function in the
-  \pkg{LaplacesDemon} package.
+  These are C++ versions of the \code{dmvn} and \code{rmvn} functions in
+  the \pkg{LaplacesDemon} package.
 }
 \usage{
-dmvn(x, mu, Sigma, log=FALSE) 
+dmvn(x, mu, Sigma, log=FALSE)
+rmvn(n=1, mu=rep(0,ncol(Sigma)), Sigma)
 }
 \arguments{
   \item{x}{See \code{dmvn}.}
+  \item{n}{See \code{rmvn}.}
   \item{mu}{See \code{dmvn}.}
   \item{Sigma}{See \code{dmvn}.}
   \item{log}{See \code{dmvn}.}

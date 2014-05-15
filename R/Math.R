@@ -35,3 +35,5 @@ partial <- function(Model, parm, Data, Interval=1e-6, Method="simple")
           }
      else stop("The", Method, "method is unknown.")
      }
+
+#End

@@ -26,9 +26,9 @@
   Documentation exists, but is minimal, because these functions are
   fully documented in the LaplacesDemon package.
 
-  To use LaplacesDemonCpp, simply activate the LaplacesDemon library,
-  then activate the LaplacesDemonCpp library, and any C++ functions here
-  will replace the R functions in LaplacesDemon.
+  To use LaplacesDemonCpp, simply activate the LaplacesDemonCpp library,
+  and any C++ functions here will replace the R functions in
+  LaplacesDemon.
 }
 \author{Statisticat, LLC. \email{software@bayesian-inference.com}}
 \keyword{package}

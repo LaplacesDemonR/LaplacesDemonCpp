@@ -1,15 +1,18 @@
 \name{dist.Multivariate.Normal.Cholesky}
 \alias{dmvnc}
+\alias{rmvnc}
 \title{Multivariate Normal Distribution: Cholesky Parameterization}
 \description{
-  This is a C++ version of the \code{dmvnc} function in the
-  \pkg{LaplacesDemon} package.
+  These are C++ versions of the \code{dmvnc} and \code{rmvnc} functions
+  in the \pkg{LaplacesDemon} package.
 }
 \usage{
-dmvnc(x, mu, U, log=FALSE) 
+dmvnc(x, mu, U, log=FALSE)
+rmvnc(n=1, mu=rep(0,ncol(U)), U)
 }
 \arguments{
   \item{x}{See \code{dmvnc}.}
+  \item{n}{See \code{rmvnc}.}
   \item{mu}{See \code{dmvnc}.}
   \item{U}{See \code{dmvnc}.}
   \item{log}{See \code{dmvnc}.}
