@@ -9,6 +9,13 @@ dhalfcauchy <- function(x, scale=25, log=FALSE)
           PACKAGE="LaplacesDemonCpp"))
      }
 
+rhalfcauchy <- function(n, scale=25)
+     {
+     scale <- as.vector(scale)[1]
+     if(scale <= 0) stop("The scale parameter must be positive.")
+     return(.Call("rhalfcauchy", n, scale, PACKAGE="LaplacesDemonCpp"))
+     }
+
 ###########################################################################
 # Multivariate Normal Distribution                                        #
 ###########################################################################
