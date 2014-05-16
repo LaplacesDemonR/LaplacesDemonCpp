@@ -1,3 +1,6 @@
+2014-05-15 LaplacesDemon: Added .mcmcamwg and .mcmcmwg
+2014-05-15 Matrices: Added is.positive.semidefnite
+2014-05-15 Package Structure: Converted to a copy of LaplacesDemon
 2014-05-15 Distributions: Added rhalfcauchy
 2014-05-13 Matrices: Added is.positive.definite, is.symmetric.matrix, and tr
 2014-05-13 Distributions: Added dmvn, dmvnc, rmvn, rmvnc, rmvnp, and rmvnpc

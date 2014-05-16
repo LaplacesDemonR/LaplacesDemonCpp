@@ -8,6 +8,6 @@ Maintainer: Statisticat, LLC <software@bayesian-inference.com>
 Description: Providing C++ Functions for LaplacesDemon
 ByteCompile: TRUE
 License: MIT + file LICENSE
-Imports: LaplacesDemon (>= 14.05.07), Rcpp (>= 0.11.1), RcppArmadillo (>= 0.4.300.0)
+Imports: parallel, Rcpp (>= 0.11.1), RcppArmadillo (>= 0.4.300.0)
 LinkingTo: Rcpp, RcppArmadillo
 NeedsCompilation: yes

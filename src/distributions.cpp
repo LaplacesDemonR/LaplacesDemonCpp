@@ -1,4 +1,4 @@
-#include "Distributions.h"
+#include "distributions.h"
 
 using namespace Rcpp;
 using namespace arma;
