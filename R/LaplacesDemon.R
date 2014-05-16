@@ -553,7 +553,7 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
                     stop("The Specs argument is not a list.", file=LogFile,
                          append=TRUE)
                if(!identical(names(Specs),
-                    c("alpha.star","Dist","gamma","Periodicity")))
+                    c("alpha.star","Dist","gamma")))
                     stop("The Specs argument is incorrect.", file=LogFile,
                          append=TRUE)
                Specs[["alpha.star"]] <- Specs[["alpha.star"]][1]
@@ -1512,6 +1512,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
      U <- colSums(s$u)
      tol <- LIV*max(s$d)*.Machine$double.eps
      problem <- any(s$d <= tol)
+     DiagCovar <- matrix(diag(VarCov), floor(Iterations/Periodicity), LIV,
+          byrow=TRUE)
      for (iter in 1:Iterations) {
           ### Print Status
           if(iter %% Status == 0)
@@ -1556,7 +1558,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
           if(iter %% Periodicity == 0) {
                VarCov <- obs.scatter/iter - tcrossprod(obs.sum/iter)
                diag(VarCov) <- diag(VarCov) + 1e-05
-               DiagCovar <- rbind(DiagCovar, diag(VarCov))
+               a.iter <- floor(iter / Periodicity)
+               DiagCovar[a.iter,] <- diag(VarCov)
                s <- svd(VarCov)
                U <- colSums(s$u)
                tol <- LIV*max(s$d)*.Machine$double.eps
@@ -1964,6 +1967,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
      Periodicity <- Specs[["Periodicity"]]
      post <- matrix(Mo0[["parm"]], Iterations, LIV, byrow=TRUE)
      Iden.Mat <- diag(LIV)
+     DiagCovar <- matrix(diag(VarCov), floor(Iterations/Periodicity), LIV,
+          byrow=TRUE)
      for (iter in 1:Iterations) {
           ### Print Status
           if(iter %% Status == 0)
@@ -2022,7 +2027,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
                ### Covariance Matrix (Preferred if it works)
                VarCov <- {ScaleF * cov(post[1:iter,])} +
                     {ScaleF * 1.0E-5 * Iden.Mat}
-               DiagCovar <- rbind(DiagCovar, diag(VarCov))
+               a.iter <- floor(iter / Periodicity)
+               DiagCovar[a.iter,] <- diag(VarCov)
                ### Univariate Standard Deviations
                for (j in 1:LIV) {
                     tuning[j] <- sqrt(ScaleF * {var(post[1:iter,j])} +
@@ -2051,6 +2057,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
      if(all(upper.triangle(VarCov) == 0)) prop.R <- NULL
      else prop.R <- ScaleF * chol(VarCov)
      tuning <- sqrt(0.0001 * ScaleF)
+     DiagCovar <- matrix(diag(VarCov), floor(Iterations/Periodicity), LIV,
+          byrow=TRUE)
      for (iter in 1:Iterations) {
           ### Print Status
           if(iter %% Status == 0)
@@ -2098,7 +2106,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
           if({iter >= Adaptive} & {iter %% Periodicity == 0}) {
                VarCov <- obs.scatter/iter - tcrossprod(obs.sum/iter)
                diag(VarCov) <- diag(VarCov) + 1e-05
-               DiagCovar <- rbind(DiagCovar, diag(VarCov))
+               a.iter <- floor(iter / Periodicity)
+               DiagCovar[a.iter,] <- diag(VarCov)
                prop.R <- try(ScaleF * chol(VarCov), silent=TRUE)
                if(!is.matrix(prop.R)) prop.R <- NULL}
           }
@@ -2416,6 +2425,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
      Periodicity <- Specs[["Periodicity"]]
      post <- matrix(Mo0[["parm"]], Iterations, LIV, byrow=TRUE)
      Iden.Mat <- diag(LIV)
+     DiagCovar <- matrix(diag(VarCov), floor(Iterations/Periodicity), LIV,
+          byrow=TRUE)
      for (iter in 1:Iterations) {
           ### Print Status
           if(iter %% Status == 0)
@@ -2510,7 +2521,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
                ### Covariance Matrix (Preferred if it works)
                VarCov <- {ScaleF * cov(post[1:iter,])} +
                     {ScaleF * 1.0E-5 * Iden.Mat}
-               DiagCovar <- rbind(DiagCovar, diag(VarCov))
+               a.iter <- floor(iter / Periodicity)
+               DiagCovar[a.iter,] <- diag(VarCov)
                ### Univariate Standard Deviations
                for (j in 1:LIV) {
                     tuning[j] <- sqrt(ScaleF * {var(post[1:iter,j])} +
@@ -3584,7 +3596,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
                          INCA_iter <- INCA_iter + 1}
                     INCA_first <- FALSE}
                VarCov <- lambda * (tmpCov + 1e-9 * Iden.Mat)
-               DiagCovar[iter/Periodicity,] <- diag(VarCov)
+               a.iter <- floor(iter / Periodicity)
+               DiagCovar[a.iter,] <- diag(VarCov)
                ### Univariate Standard Deviations
                tuning <- sqrt(diag(VarCov))}
      }
@@ -4223,6 +4236,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
      tuning <- 1 #Tuning
      edge.scale <- 5 #Tuning
      t.iter <- 1
+     DiagCovar <- matrix(0, floor(Iterations/Thinning), LIV,
+          byrow=TRUE)
      for (iter in 1:Iterations) {
           ### Print Status
           if(iter %% Status == 0)
@@ -4266,7 +4281,7 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
                thinned[t.iter,] <- Mo1[["parm"]]
                Dev[t.iter] <- Mo1[["Dev"]]
                Mon[t.iter,] <- Mo1[["Monitor"]]
-               DiagCovar <- rbind(DiagCovar, diag(S.eig$vectors))}
+               DiagCovar[floor(iter / Thinning),] <- diag(S.eig$vectors)}
           Mo0 <- Mo1
           }
      ### Output
@@ -4285,7 +4300,6 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
      alpha.star <- Specs[["alpha.star"]]
      Dist <- Specs[["Dist"]]
      gamma <- Specs[["gamma"]]
-     Periodicity <- Specs[["Periodicity"]]
      if(!is.symmetric.matrix(VarCov)) {
           cat("\nAsymmetric Covar, correcting now...\n", file=LogFile,
                append=TRUE)
@@ -4298,6 +4312,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
      S.z <- try(t(chol(VarCov)), silent=TRUE)
      if(!inherits(S.z, "try-error")) S <- S.z
      else S <- Iden.Mat
+     DiagCovar <- matrix(diag(VarCov), floor(Iterations/Thinning),
+          LIV, byrow=TRUE)
      for (iter in 1:Iterations) {
           ### Print Status
           if(iter %% Status == 0)
@@ -4333,21 +4349,20 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
                     Dev[t.iter] <- Mo1[["Dev"]]
                     Mon[t.iter,] <- Mo1[["Monitor"]]}}
           ### Adaptation
-          if(iter %% Periodicity == 0) {
-               eta <- min(1, LIV*iter^(-gamma))
-               VarCov.test <- S %*% {Iden.Mat +
-                    eta*(min(1, exp(log.alpha)) - alpha.star) *
-                    U %*% t(U) / sum(U*U)} %*% t(S)
-               if(missing(VarCov.test) || !all(is.finite(VarCov.test)) ||
-                    !is.matrix(VarCov.test)) {VarCov.test <- VarCov}
-               if(!is.symmetric.matrix(VarCov.test))
-                    VarCov.test <- as.symmetric.matrix(VarCov.test)
-               if(is.positive.definite(VarCov.test)) {
-                    S.z <- try(t(chol(VarCov)), silent=TRUE)
-                    if(!inherits(S.z, "try-error")) {
-                         VarCov <- VarCov.test
-                         S <- S.z}}
-               DiagCovar <- rbind(DiagCovar, diag(VarCov))}
+          eta <- min(1, LIV*iter^(-gamma))
+          VarCov.test <- S %*% {Iden.Mat +
+               eta*(min(1, exp(log.alpha)) - alpha.star) *
+               U %*% t(U) / sum(U*U)} %*% t(S)
+          if(missing(VarCov.test) || !all(is.finite(VarCov.test)) ||
+               !is.matrix(VarCov.test)) {VarCov.test <- VarCov}
+          if(!is.symmetric.matrix(VarCov.test))
+               VarCov.test <- as.symmetric.matrix(VarCov.test)
+          if(is.positive.definite(VarCov.test)) {
+               S.z <- try(t(chol(VarCov)), silent=TRUE)
+               if(!inherits(S.z, "try-error")) {
+                    VarCov <- VarCov.test
+                    S <- S.z}}
+          DiagCovar[floor(iter / Thinning),] <- diag(VarCov)
           }
      ### Output
      out <- list(Acceptance=Acceptance,
@@ -4750,6 +4765,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
           Dyn[t,k] <- which(parm.names == Dyn[t,k])}}
      Dyn <- matrix(as.numeric(Dyn), nrow(Dyn), ncol(Dyn))
      staticparms <- c(1:LIV)[-as.vector(Dyn)]
+     DiagCovar <- matrix(tuning, floor(Iterations/Periodicity), LIV,
+          byrow=TRUE)
      for (iter in 1:Iterations) {
           ### Print Status
           if(iter %% Status == 0)
@@ -4796,7 +4813,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
                log.tuning[tuning.num] <- log.tuning[tuning.num] + size
                log.tuning[-tuning.num] <- log.tuning[-tuning.num] - size
                tuning <- exp(log.tuning)
-               DiagCovar <- rbind(DiagCovar, tuning)}
+               a.iter <- floor(iter / Periodicity)
+               DiagCovar[a.iter,] <- tuning}
           }
      ### Output
      out <- list(Acceptance=mean(as.vector(Acceptance)),
@@ -5580,6 +5598,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
      ivs <- Mo0[["parm"]]
      post <- Fit$Posterior1[samps,]
      post[1,as.vector(Dyn)] <- ivs[as.vector(Dyn)]
+     DiagCovar <- matrix(tuning, floor(Iterations/Periodicity), LIV,
+          byrow=TRUE)
      for (iter in 1:Iterations) {
           ### Print Status
           if(iter %% Status == 0)
@@ -5627,7 +5647,8 @@ LaplacesDemon <- function(Model, Data, Initial.Values, Covar=NULL,
                log.tuning[tuning.num] <- log.tuning[tuning.num] + size
                log.tuning[-tuning.num] <- log.tuning[-tuning.num] - size
                tuning <- exp(log.tuning)
-               DiagCovar <- rbind(DiagCovar, tuning)}
+               a.iter <- floor(iter / Periodicity)
+               DiagCovar[a.iter,] <- tuning}
           }
      ### Output
      out <- list(Acceptance=mean(as.vector(Acceptance[dynsample])),
