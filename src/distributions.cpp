@@ -33,6 +33,51 @@ SEXP rhalfcauchy(SEXP N, SEXP SCALE) {
 }
 
 /*------------------------------------------------------------------------/
+/ Inverse Wishart Distribution                                            /
+/------------------------------------------------------------------------*/
+
+SEXP dinvwishart(SEXP SIGMA, SEXP NU, SEXP s, SEXP LOGD) {
+  arma::mat Sigma = as<arma::mat>(SIGMA);
+  double nu = as<double>(NU);
+  arma::mat S = as<arma::mat>(s);
+  bool logd = as<bool>(LOGD);
+  int k = Sigma.n_rows;
+  double dens = 0, gamsum = 0;
+  for (int i = 0; i < k; i++) {
+    gamsum += lgamma((nu + 1.0 - i - 1.0) / 2.0);
+  }
+  dens = -((nu * k) / 2.0) * log(2.0) - ((k * (k - 1.0)) / 4.0) * 
+    log(M_PI) - gamsum + (nu / 2.0) * log(arma::det(S)) - 
+    ((nu + k + 1.0) / 2.0) * log(arma::det(Sigma)) - 
+    0.5 * arma::trace(S * arma::inv(Sigma));
+  if (logd == false) dens = exp(dens);
+  return wrap(dens);
+}
+
+/*------------------------------------------------------------------------/
+/ Inverse Wishart Distribution (Cholesky Parameterization)                /
+/------------------------------------------------------------------------*/
+
+SEXP dinvwishartc(SEXP u, SEXP NU, SEXP s, SEXP LOGD) {
+  arma::mat U = as<arma::mat>(u);
+  double nu = as<double>(NU);
+  arma::mat S = as<arma::mat>(s);
+  bool logd = as<bool>(LOGD);
+  int k = U.n_rows;
+  double dens = 0, gamsum = 0;
+  arma::mat Sigma = arma::trans(U) * U;
+  for (int i = 0; i < k; i++) {
+    gamsum += lgamma((nu + 1.0 - i - 1.0) / 2.0);
+  }
+  dens = -((nu * k) / 2.0) * log(2.0) - ((k * (k - 1.0)) / 4.0) * 
+    log(M_PI) - gamsum + (nu / 2.0) * log(arma::det(S)) - 
+    ((nu + k + 1.0) / 2.0) * log(arma::det(Sigma)) - 
+    0.5 * arma::trace(S * arma::inv(Sigma));
+  if (logd == false) dens = exp(dens);
+  return wrap(dens);
+}
+
+/*------------------------------------------------------------------------/
 / Multivariate Normal Distribution                                        /
 /------------------------------------------------------------------------*/
 
@@ -102,6 +147,26 @@ SEXP rmvnc(SEXP MU, SEXP u) {
 / Multivariate Normal Distribution (Precision Parameterization)           /
 /------------------------------------------------------------------------*/
 
+SEXP dmvnp(SEXP X, SEXP MU, SEXP OMEGA, SEXP LOGD) {
+  arma::mat x = as<arma::mat>(X);
+  arma::mat mu = as<arma::mat>(MU);
+  arma::mat Omega = as<arma::mat>(OMEGA);
+  bool logd = as<bool>(LOGD);
+  int k = x.n_cols;
+  int n = x.n_rows;
+  double logdetOmega = log(arma::det(Omega));
+  double log2pi = std::log(2.0 * M_PI);
+  arma::mat ss = x - mu;
+  arma::mat z = ss * Omega % ss;
+  Rcpp::NumericVector dens(n);
+  for (int i = 0; i < n; i++) {
+    dens[i] = (-k / 2.0) * log2pi + 0.5 * logdetOmega - 
+      0.5 * arma::sum(z.row(i));
+  }
+  if (logd == false) dens = exp(dens);
+  return wrap(dens);
+}
+
 SEXP rmvnp(SEXP MU, SEXP OMEGA) {
   arma::mat mu = as<arma::mat>(MU);
   arma::mat Omega = as<arma::mat>(OMEGA);
@@ -114,6 +179,27 @@ SEXP rmvnp(SEXP MU, SEXP OMEGA) {
 /*------------------------------------------------------------------------/
 / Multivariate Normal Distribution (Precision-Cholesky Parameterization)  /
 /------------------------------------------------------------------------*/
+
+SEXP dmvnpc(SEXP X, SEXP MU, SEXP u, SEXP LOGD) {
+  arma::mat x = as<arma::mat>(X);
+  arma::mat mu = as<arma::mat>(MU);
+  arma::mat U = as<arma::mat>(u);
+  arma::mat Omega = arma::trans(U) * U;
+  bool logd = as<bool>(LOGD);
+  int k = x.n_cols;
+  int n = x.n_rows;
+  double logdetOmega = log(arma::det(Omega));
+  double log2pi = std::log(2.0 * M_PI);
+  arma::mat ss = x - mu;
+  arma::mat z = ss * Omega % ss;
+  Rcpp::NumericVector dens(n);
+  for (int i = 0; i < n; i++) {
+    dens[i] = (-k / 2.0) * log2pi + 0.5 * logdetOmega - 
+      0.5 * arma::sum(z.row(i));
+  }
+  if (logd == false) dens = exp(dens);
+  return wrap(dens);
+}
 
 SEXP rmvnpc(SEXP MU, SEXP u) {
   arma::mat mu = as<arma::mat>(MU);
@@ -136,7 +222,7 @@ SEXP dwishart(SEXP OMEGA, SEXP NU, SEXP s, SEXP LOGD) {
   int k = Omega.n_rows;
   double dens = 0, gamsum = 0;
   for (int i = 0; i < k; i++) {
-    gamsum += lgamma((nu + 1.0 - i + 1.0) / 2.0);
+    gamsum += lgamma((nu + 1.0 - i - 1.0) / 2.0);
   }
   dens = -((nu * k) / 2.0) * log(2.0) - ((k * (k - 1.0)) / 4.0) * 
     log(M_PI) - gamsum - (nu / 2.0) * log(arma::det(S)) + 
@@ -174,7 +260,7 @@ SEXP dwishartc(SEXP u, SEXP NU, SEXP s, SEXP LOGD) {
   int k = Omega.n_rows;
   double dens = 0, gamsum = 0;
   for (int i = 0; i < k; i++) {
-    gamsum += lgamma((nu + 1.0 - i + 1.0) / 2.0);
+    gamsum += lgamma((nu + 1.0 - i - 1.0) / 2.0);
   }
   dens = -((nu * k) / 2.0) * log(2.0) - ((k * (k - 1.0)) / 4.0) * 
     log(M_PI) - gamsum - (nu / 2.0) * log(arma::det(S)) + 

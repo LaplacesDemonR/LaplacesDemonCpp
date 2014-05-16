@@ -7,6 +7,24 @@ RcppExport SEXP dhalfcauchy(SEXP X, SEXP SCALE, SEXP LOGD);
 
 #endif
 
+#ifndef _LaplacesDemonCpp_dinvwishart_H
+#define _LaplacesDemonCpp_dinvwishart_H
+
+#include <RcppArmadillo.h>
+
+RcppExport SEXP dinvwishart(SEXP SIGMA, SEXP NU, SEXP s, SEXP LOGD);
+
+#endif
+
+#ifndef _LaplacesDemonCpp_dinvwishartc_H
+#define _LaplacesDemonCpp_dinvwishartc_H
+
+#include <RcppArmadillo.h>
+
+RcppExport SEXP dinvwishartc(SEXP u, SEXP NU, SEXP s, SEXP LOGD);
+
+#endif
+
 #ifndef _LaplacesDemonCpp_dmvn_H
 #define _LaplacesDemonCpp_dmvn_H
 
@@ -22,6 +40,24 @@ RcppExport SEXP dmvn(SEXP X, SEXP MU, SEXP SIGMA, SEXP LOGD);
 #include <RcppArmadillo.h>
 
 RcppExport SEXP dmvnc(SEXP X, SEXP MU, SEXP u, SEXP LOGD);
+
+#endif
+
+#ifndef _LaplacesDemonCpp_dmvnp_H
+#define _LaplacesDemonCpp_dmvnp_H
+
+#include <RcppArmadillo.h>
+
+RcppExport SEXP dmvnp(SEXP X, SEXP MU, SEXP OMEGA, SEXP LOGD);
+
+#endif
+
+#ifndef _LaplacesDemonCpp_dmvnpc_H
+#define _LaplacesDemonCpp_dmvnpc_H
+
+#include <RcppArmadillo.h>
+
+RcppExport SEXP dmvnpc(SEXP X, SEXP MU, SEXP u, SEXP LOGD);
 
 #endif
 

@@ -572,14 +572,8 @@ dinvwishart <- function(Sigma, nu, S, log=FALSE)
           stop("The dimensions of Sigma and S differ.")
      if(nu < nrow(S))
           stop("The nu parameter is less than the dimension of S.")
-     k <- nrow(Sigma)
-     gamsum <- 0
-     for (i in 1:k) {gamsum <- gamsum + lgamma((nu + 1 - i)/2)}
-     dens <- -(nu*k/2)*log(2) - ((k*(k - 1))/4)*log(pi) - gamsum +
-          (nu/2)*log(det(S)) - ((nu + k + 1)/2)*log(det(Sigma)) -
-          0.5*tr(S %*% as.inverse(Sigma))
-     if(log == FALSE) dens <- exp(dens)
-     return(dens)
+     return(.Call("dinvwishart", Sigma, nu, S, log,
+          PACKAGE="LaplacesDemonCpp"))
      }
 rinvwishart <- function(nu, S)
      {return(as.inverse(rwishart(nu, as.inverse(S))))}
@@ -591,22 +585,15 @@ rinvwishart <- function(nu, S)
 dinvwishartc <- function(U, nu, S, log=FALSE)
      {
      if(missing(U)) stop("Upper triangular U is required.")
-     Sigma <- t(U) %*% U
      if(!is.matrix(S)) S <- matrix(S)
      if(!is.positive.semidefinite(S))
           stop("Matrix S is not positive-semidefinite.")
-     if(!identical(dim(S), dim(Sigma)))
-          stop("The dimensions of Sigma and S differ.")
+     if(!identical(dim(S), dim(U)))
+          stop("The dimensions of Sigma and U differ.")
      if(nu < nrow(S))
           stop("The nu parameter is less than the dimension of S.")
-     k <- nrow(Sigma)
-     gamsum <- 0
-     for (i in 1:k) {gamsum <- gamsum + lgamma((nu + 1 - i)/2)}
-     dens <- -(nu*k/2)*log(2) - ((k*(k - 1))/4)*log(pi) - gamsum +
-          (nu/2)*log(det(S)) - ((nu + k + 1)/2)*log(det(Sigma)) -
-          0.5*tr(S %*% as.inverse(Sigma))
-     if(log == FALSE) dens <- exp(dens)
-     return(dens)
+     return(.Call("dinvwishartc", U, nu, S, log,
+          PACKAGE="LaplacesDemonCpp"))
      }
 rinvwishartc <- function(nu, S)
      {return(chol(as.inverse(rwishart(nu, as.inverse(S)))))}
@@ -1085,18 +1072,16 @@ rmvnc <- function(n=1, mu, U)
 dmvnp <- function(x, mu, Omega, log=FALSE)
      {
      if(!is.matrix(x)) x <- rbind(x)
-     if(!is.matrix(mu)) mu <- rep(mu, each=nrow(x))
+     if(!is.matrix(mu)) mu <- rbind(mu)
+     nmax <- max(nrow(x), nrow(mu))
+     x <- x[rep(1:nrow(x), len=nmax),,drop=FALSE]
+     mu <- mu[rep(1:nrow(mu), len=nmax),,drop=FALSE]
      if(missing(Omega)) Omega <- diag(ncol(x))
      if(!is.matrix(Omega)) Omega <- matrix(Omega)
+     Omega <- as.symmetric.matrix(Omega)
      if(!is.positive.definite(Omega))
           stop("Matrix Omega is not positive-definite.")
-     k <- nrow(Omega)
-     detOmega <- det(Omega)
-     ss <- x - mu
-     z <- rowSums({ss %*% Omega} * ss)
-     dens <- as.vector((-k/2)*log(2*pi) + 0.5*log(detOmega) - 0.5*z)
-     if(log == FALSE) dens <- exp(dens)
-     return(dens)
+     return(.Call("dmvnp", x, mu, Omega, log, PACKAGE="LaplacesDemonCpp"))
      }
 rmvnp <- function(n=1, mu, Omega)
      {
@@ -1116,16 +1101,12 @@ rmvnp <- function(n=1, mu, Omega)
 dmvnpc <- function(x, mu, U, log=FALSE)
      {
      if(!is.matrix(x)) x <- rbind(x)
-     if(!is.matrix(mu)) mu <- rep(mu, each=nrow(x))
+     if(!is.matrix(mu)) mu <- rbind(mu)
+     nmax <- max(nrow(x), nrow(mu))
+     x <- x[rep(1:nrow(x), len=nmax),,drop=FALSE]
+     mu <- mu[rep(1:nrow(mu), len=nmax),,drop=FALSE]
      if(missing(U)) stop("Upper triangular U is required.")
-     k <- ncol(U)
-     Omega <- t(U) %*% U
-     detOmega <- det(Omega)
-     ss <- x - mu
-     z <- rowSums({ss %*% Omega} * ss)
-     dens <- as.vector((-k/2)*log(2*pi) + 0.5*log(detOmega) - 0.5*z)
-     if(log == FALSE) dens <- exp(dens)
-     return(dens)
+     return(.Call("dmvnpc", x, mu, U, log, PACKAGE="LaplacesDemonCpp"))
      }
 rmvnpc <- function(n=1, mu, U)
      {
