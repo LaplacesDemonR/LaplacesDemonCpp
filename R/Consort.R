@@ -700,13 +700,15 @@ Consort <- function(object=NULL)
                }
           else if(Alg == "OHSS") {
                ### OHSS
+               A <- object$Specs[["A"]]
+               n <- object$Specs[["n"]] + object$Iterations
                cat(oname, " <- LaplacesDemon(Model, Data=", dname,
                     ", Initial.Values,\n", sep="")
                cat("     Covar=", oname, "$Covar, Iterations=",
                     Rec.Iterations, ", Status=", Rec.Status, ", ",
                     "Thinning=", Rec.Thinning, ",\n", sep="")
                cat("     Algorithm=\"OHSS\", ",
-                    "Specs=NULL)\n\n", sep="")
+                    "Specs=list(A=", A, ", n=", n,"))\n\n", sep="")
                }
           else if({(Alg == "AM") & !Dim.Adapt & !Fast & !Ready} | 
              {(Alg == "AMM") & !Dim.Adapt & !Fast & Ready} | 
@@ -733,7 +735,7 @@ Consort <- function(object=NULL)
                cat("     Algorithm=\"RAM\", ",
                     "Specs=list(alpha.star=", al,
                     ", Dist=\"", Dist,
-                    "\", gamma=", gamma, ")\n\n", sep="")
+                    "\", gamma=", gamma, "))\n\n", sep="")
                }
           else if(Alg == "RDMH") {
                ### RDMH
