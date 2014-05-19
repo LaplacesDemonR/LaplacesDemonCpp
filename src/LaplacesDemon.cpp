@@ -80,7 +80,7 @@ SEXP mcmcamwg(SEXP MODEL, SEXP DATA, SEXP ITERATIONS, SEXP STATUS,
         if (AcceptanceRate[k] > 0.44) logtuning[k] += size;
         else logtuning[k] -= size;
 	tuning = exp(logtuning);
-        a_iter = floor((iter) / Periodicity);
+        a_iter = floor(iter / Periodicity);
         DiagCovar(a_iter,_) = tuning;
       }
     }

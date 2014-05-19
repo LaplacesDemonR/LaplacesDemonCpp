@@ -78,6 +78,44 @@ SEXP dinvwishartc(SEXP u, SEXP NU, SEXP s, SEXP LOGD) {
 }
 
 /*------------------------------------------------------------------------/
+/ Laplace Distribution                                                    /
+/------------------------------------------------------------------------*/
+
+SEXP dlaplace(SEXP X, SEXP LOCATION, SEXP SCALE, SEXP LOGD) {
+  Rcpp::NumericVector x(X), location(LOCATION), scale(SCALE);
+  int N = max(Rcpp::NumericVector::create(x.size(), location.size(), 
+    scale.size()));
+  Rcpp::NumericVector xn = rep_len(x, N), locationn = rep_len(location, N), 
+    scalen = rep_len(scale, N), dens(N);
+  bool logd = as<bool>(LOGD);
+  Rcpp::NumericVector xloc = xn - locationn;
+  xloc = abs(xloc);
+  for (int i = 0; i < N; i++) {
+    dens[i] = (-xloc[i] / scalen[i]) - log(2 * scalen[i]);
+  }
+  if (logd == false) dens = exp(dens);
+  return wrap(dens);
+}
+
+SEXP rlaplace(SEXP N, SEXP LOCATION, SEXP SCALE) {
+  int n = as<int>(N);
+  double signr = 0;
+  Rcpp::NumericVector location(LOCATION), scale(SCALE);
+  Rcpp::NumericVector locationn = rep_len(location, n),
+    scalen = rep_len(scale, n);
+  Rcpp::NumericVector r = runif(n), r2(r), x(n);
+  RNGScope scope;
+  for (int i = 0; i < n; i++) {
+    if (r[i] > 0.5) {
+      r2[i] = 1 - r[i];
+      signr = 1;
+    } else signr = -1;
+    x[i] = locationn[i] - signr * scalen[i] * log(2 * r2[i]);
+  }
+  return wrap(x);
+}
+
+/*------------------------------------------------------------------------/
 / Multivariate Normal Distribution                                        /
 /------------------------------------------------------------------------*/
 
@@ -208,6 +246,32 @@ SEXP rmvnpc(SEXP MU, SEXP u) {
   RNGScope scope;
   arma::mat z = arma::randn(n, U.n_cols);
   return wrap(mu + z * arma::inv(arma::trans(U)));
+}
+
+/*------------------------------------------------------------------------/
+/ Multivariate t Distribution                                             /
+/------------------------------------------------------------------------*/
+
+SEXP dmvt(SEXP X, SEXP MU, SEXP s, SEXP DF, SEXP LOGD) {
+  arma::mat x = as<arma::mat>(X);
+  arma::mat mu = as<arma::mat>(MU);
+  arma::mat S = as<arma::mat>(s);
+  double df = as<double>(DF);
+  bool logd = as<bool>(LOGD);
+  int k = x.n_cols;
+  int n = x.n_rows;
+  double logdetS = log(arma::det(S));
+  arma::mat ss = x - mu;
+  arma::mat Omega = arma::inv(S);
+  arma::mat z = ss * Omega % ss;
+  Rcpp::NumericVector dens(n);
+  for (int i = 0; i < n; i++) {
+    dens[i] = lgamma((df + k) / 2.0) - lgamma(df / 2.0) + (k / 2.0)*df +
+      (k / 2.0) * log(M_PI) + 0.5 * logdetS + ((df + k) / 2.0) *
+      log(1.0 + (1.0 / df) * arma::sum(z.row(i)));
+  }
+  if (logd == false) dens = exp(dens);
+  return wrap(dens);
 }
 
 /*------------------------------------------------------------------------/

@@ -82,8 +82,15 @@ partial <- function(Model, parm, Data, Interval=1e-6, Method="simple")
      f <- Model(parm, Data)[["LP"]]
      n <- length(parm)
      if(Method == "simple") {
-          return(.Call("partial", Model, parm, Data, Interval=1e-6,
-               PACKAGE="LaplacesDemonCpp"))
+          if(n == 1)
+               return({Model(parm + Interval, Data)[["LP"]] - f} / Interval)
+          df <- rep(NA, n)
+          for (i in 1:n) {
+               dx <- parm
+               dx[i] <- dx[i] + Interval
+               df[i] <- {Model(dx, Data)[["LP"]] - f} / Interval}
+          df[which(!is.finite(df))] <- 0
+          return(df)
           }
      else if(Method == "Richardson") {
           zero.tol <- sqrt(.Machine$double.eps / 7e-7)

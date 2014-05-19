@@ -606,15 +606,9 @@ rinvwishartc <- function(nu, S)
 
 dlaplace <- function(x, location=0, scale=1, log=FALSE)
      {
-     x <- as.vector(x); location <- as.vector(location)
-     scale <- as.vector(scale)
      if(any(scale <= 0)) stop("The scale parameter must be positive.")
-     NN <- max(length(x), length(location), length(scale))
-     x <- rep(x, len=NN); location <- rep(location, len=NN)
-     scale <- rep(scale, len=NN)
-     dens <- (-abs(x - location) / scale) - log(2 * scale)
-     if(log == FALSE) dens <- exp(dens)
-     return(dens)
+     return(.Call("dlaplace", as.vector(x), as.vector(location),
+          as.vector(scale), log, PACKAGE="LaplacesDemonCpp"))
      }
 plaplace <- function(q, location=0, scale=1)
      {
@@ -643,12 +637,9 @@ qlaplace <- function(p, location=0, scale=1)
      }
 rlaplace <- function(n, location=0, scale=1)
      {
-     location <- rep(location, len=n); scale <- rep(scale, len=n)
      if(any(scale <= 0)) stop("The scale parameter must be positive.")
-     r <- r2 <- runif(n)
-     temp <- which(r > 0.5); r2[temp] <- 1 - r[temp]
-     x <- location - sign(r - 0.5) * scale * log(2 * r2)
-     return(x)
+     return(.Call("rlaplace", n, as.vector(location), as.vector(scale),
+          PACKAGE="LaplacesDemonCpp"))
      }
 
 ###########################################################################
@@ -1253,21 +1244,18 @@ rmvpec <- function(n, mu=c(0,0), U, kappa=1)
 dmvt <- function(x, mu, S, df=Inf, log=FALSE)
      {
      if(!is.matrix(x)) x <- rbind(x)
-     if(!is.matrix(mu)) mu <- rep(mu, each=nrow(x))
+     if(!is.matrix(mu)) mu <- rbind(mu)
+     nmax <- max(nrow(x), nrow(mu))
+     x <- x[rep(1:nrow(x), len=nmax),,drop=FALSE]
+     mu <- mu[rep(1:nrow(mu), len=nmax),,drop=FALSE]
      if(missing(S)) S <- diag(ncol(x))
      if(!is.matrix(S)) S <- matrix(S)
+     S <- as.symmetric.matrix(S)
      if(!is.positive.definite(S))
           stop("Matrix S is not positive-definite.")
      if(any(df <= 0)) stop("The df parameter must be positive.")
      if(any(df > 10000)) return(dmvn(x, mu, S, log))
-     k <- nrow(S)
-     ss <- x - mu
-     Omega <- as.inverse(S)
-     z <- rowSums({ss %*% Omega} * ss)
-     dens <- as.vector(lgamma((df+k)/2) - lgamma(df/2) + (k/2)*df +
-          (k/2)*log(pi) + 0.5*log(det(S)) + ((df+k)/2)*log(1 + (1/df) * z))
-     if(log == FALSE) dens <- exp(dens)
-     return(dens)
+     return(.Call("dmvt", x, mu, S, df, log, PACKAGE="LaplacesDemonCpp"))
      }
 rmvt <- function(n=1, mu=rep(0,k), S, df=Inf)
      {
