@@ -4,6 +4,32 @@ using namespace Rcpp;
 using namespace arma;
 
 /*------------------------------------------------------------------------/
+/ Categorical Distribution                                                /
+/------------------------------------------------------------------------*/
+
+SEXP rcat(SEXP P) {
+  Rcpp::NumericMatrix p(P);
+  int J = p.ncol(), n = p.nrow();
+  Rcpp::NumericVector x(n), psum(J), u(runif(n));
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < J; j++) {
+      if (j == 0) {
+        psum[j] = p(i,j);
+        if (u[i] <= p(i,j)) {
+          x[i] = j + 1;
+        }
+      } else {
+        psum[j] = psum[j-1] + p(i,j);
+        if (u[i] > psum[j-1] && u[i] <= psum[j]) {
+          x[i] = j + 1;
+        }
+      }
+    }
+  }
+  return wrap(x);
+}
+
+/*------------------------------------------------------------------------/
 / Half-Cauchy Distribution                                                /
 /------------------------------------------------------------------------*/
 

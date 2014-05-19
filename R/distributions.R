@@ -213,10 +213,7 @@ rcat <- function(n, p)
           x <- as.vector(which(rmultinom(n, size=1, prob=p) == 1,
                arr.ind=TRUE)[, "row"])}
      else {
-          n <- nrow(p)
-          x <- apply(p, 1, function(x) {
-               as.vector(which(rmultinom(1, size=1, prob=x) == 1,
-               arr.ind=TRUE)[, "row"])})
+          return(.Call("rcat", p, PACKAGE="LaplacesDemonCpp"))
           }
      return(x)
      }
