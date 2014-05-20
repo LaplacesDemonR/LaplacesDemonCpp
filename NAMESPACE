@@ -288,6 +288,7 @@ export(ABB,
        var2prec,
        var2sd,
        WAIC,
+       .colVars,
        .iqagh,
        .iqaghsg,
        .iqcagh,
@@ -354,6 +355,7 @@ export(ABB,
        .mcmcuess,
        .mcmcusamwg,
        .mcmcusmwg,
+       .rowVars,
        .vbsalimans2)
 
 S3method("plot","bmk")

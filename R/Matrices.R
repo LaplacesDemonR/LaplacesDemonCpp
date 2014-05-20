@@ -51,10 +51,8 @@ as.parm.matrix <- function(x, k, parm, Data, a=-Inf, b=Inf, restrict=FALSE,
      if(chol == TRUE) {
           if(a != -Inf | b != Inf) {
                x <- as.vector(X[upper.tri(X, diag=TRUE)])
-               x.num <- which(x < a)
-               x[x.num] <- a
-               x.num <- which(x > b)
-               x[x.num] <- b
+               x <- .Call("interval", x, a, b, reflect=TRUE,
+                    PACKAGE="LaplacesDemonCpp")
                X[upper.tri(X, diag=TRUE)] <- x
                diag(X) <- abs(diag(X))
                }
@@ -64,10 +62,8 @@ as.parm.matrix <- function(x, k, parm, Data, a=-Inf, b=Inf, restrict=FALSE,
      X[lower.tri(X)] <- t(X)[lower.tri(X)]
      if(a != -Inf | b != Inf) {
           x <- as.vector(X[upper.tri(X, diag=TRUE)])
-          x.num <- which(x < a)
-          x[x.num] <- a
-          x.num <- which(x > b)
-          x[x.num] <- b
+          x <- .Call("interval", x, a, b, reflect=TRUE,
+                    PACKAGE="LaplacesDemonCpp")
           X[upper.tri(X, diag=TRUE)] <- x
           X[lower.tri(X)] <- t(X)[lower.tri(X)]
           }
@@ -205,6 +201,13 @@ as.symmetric.matrix <- function(x, k=NULL)
      }
      else stop("x must be a vector or matrix.")
      return(symm)
+     }
+.colVars <- function(X)
+     {
+     N <- nrow(X)
+     Y <- X - matrix(colMeans(X), N, ncol(X), byrow=TRUE)
+     Z <- colMeans(Y*Y)*N/{N-1}
+     return(Z)
      }
 Cov2Cor <- function(Sigma)
      {
@@ -523,6 +526,13 @@ read.matrix <- function(file, header=FALSE, sep=",", nrow=0, samples=0,
                cat("\n", sum(complete.cases(X)),
                     "row(s) found with missing values.")}}
      return(X)
+     }
+.rowVars <- function(X)
+     {
+     N <- ncol(X)
+     Y <- X - matrix(rowMeans(X), nrow(X), N)
+     Z <- rowMeans(Y*Y)*N/{N-1}
+     return(Z)
      }
 SparseGrid <- function(J, K)
      {
