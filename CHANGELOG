@@ -1,3 +1,4 @@
+2014-05-19 Matrices: Added covar
 2014-05-19 Distributions: Added rcat
 2014-05-16 Distributions: Added dlaplace, rlaplace, and dmvt
 2014-05-16 partial: Changing back to R from C++ where it's faster

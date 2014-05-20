@@ -3,6 +3,8 @@
 
 #include <RcppArmadillo.h>
 
+RcppExport SEXP covar(SEXP x);
+
 RcppExport SEXP is_positive_definite(SEXP x);
 
 RcppExport SEXP is_positive_semidefinite(SEXP x);

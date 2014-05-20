@@ -3,6 +3,15 @@
 using namespace Rcpp;
 using namespace arma;
 
+SEXP covar(SEXP x) {
+  arma:mat X = as<arma::mat>(x);
+  int n =X.n_rows;
+  arma::vec ones(n);
+  arma::mat x = X - ones * arma::trans(ones) * (X/n);
+  arma::mat covar = arma::trans(x) * x / (n-1);
+  return wrap(covar);
+}
+
 SEXP is_positive_definite(SEXP x) {
   arma::mat X = as<arma::mat>(x);
   arma::vec eigs = arma::eig_sym(X);
