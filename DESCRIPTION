@@ -1,8 +1,8 @@
 Package: LaplacesDemonCpp
 Type: Package
 Title: C++ Extension for LaplacesDemon
-Version: 14.05.12
-Date: 2014-05-12
+Version: 14.05.27
+Date: 2014-05-27
 Author: Statisticat, LLC <software@bayesian-inference.com>
 Maintainer: Statisticat, LLC <software@bayesian-inference.com>
 Description: Providing C++ Functions for LaplacesDemon

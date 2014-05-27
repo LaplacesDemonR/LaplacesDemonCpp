@@ -85,8 +85,8 @@
   \tabular{ll}{
     Package: \tab LaplacesDemonCpp\cr
     Type: \tab Package\cr
-    Version: \tab 2014-05-12\cr
-    Date: \tab 2014-05-12\cr
+    Version: \tab 2014-05-27\cr
+    Date: \tab 2014-05-27\cr
     License: \tab MIT\cr
   }
   The LaplacesDemonCpp package consists of C++ functions that replace
