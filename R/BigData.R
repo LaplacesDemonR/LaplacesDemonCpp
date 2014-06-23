@@ -43,6 +43,9 @@ BigData <- function(file, nrow, ncol, size=1, Method="add", CPUs=1,
                as.integer(Sys.getenv("NSLOTS")), na.rm=TRUE)
           if(CPUs > detectedCores) CPUs <- detectedCores
           cl <- makeCluster(CPUs, Type)
+          varlist <- unique(c(ls(), ls(envir=.GlobalEnv),
+               ls(envir=parent.env(environment()))))
+          clusterExport(cl, varlist=varlist, envir=environment())
           clusterSetRNGStream(cl)
           out <- parLapply(cl, 1:N, function(x) batch(x))
           stopCluster(cl)
